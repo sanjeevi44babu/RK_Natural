@@ -33,12 +33,12 @@ export default function Login() {
     }
   };
 
-  // Demo
+  // Demo credentials
   const demoCredentials = [
     { role: 'Admin', email: 'admin@naturecure.com' },
     { role: 'Doctor', email: 'doctor@naturecure.com' },
     { role: 'Supervisor', email: 'supervisor@naturecure.com' },
-    { role: 'Therapist', email: 'physio@naturecure.com' },
+    { role: 'Physiotherapist', email: 'physio@naturecure.com' },
   ];
 
   return (

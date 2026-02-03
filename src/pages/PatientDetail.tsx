@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Mail, MapPin, Edit, Heart, Stethoscope, LogOut, Plus } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, MapPin, Edit, Heart, Stethoscope, LogOut, Plus, QrCode, Copy, Check } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Avatar } from '@/components/common/Avatar';
 import { Button } from '@/components/ui/button';
 import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function PatientDetail() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function PatientDetail() {
   const { patients, healthRecords, appointments } = useData();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'history' | 'appointments'>('profile');
+  const [copied, setCopied] = useState(false);
 
   const patient = patients.find(p => p.id === id);
   const patientRecords = healthRecords.filter(r => r.patientId === id);
@@ -26,10 +28,23 @@ export default function PatientDetail() {
     );
   }
 
-  const canEdit = user?.role === 'doctor' || user?.role === 'supervisor';
-  const canHealthCheck = user?.role === 'doctor' || user?.role === 'physiotherapist';
-  const canDischarge = user?.role === 'doctor' || user?.role === 'supervisor';
-  const canSchedule = user?.role === 'doctor' || user?.role === 'supervisor' || user?.role === 'physiotherapist';
+  // Permission checks
+  const isAdmin = user?.role === 'admin';
+  const isDoctor = user?.role === 'doctor';
+  const isSupervisor = user?.role === 'supervisor';
+  const isTherapist = user?.role === 'physiotherapist';
+
+  const canEdit = isDoctor || isSupervisor;
+  const canHealthCheck = isDoctor || isTherapist;
+  const canDischarge = isDoctor || isSupervisor;
+  const canSchedule = isSupervisor; // Only supervisor can schedule
+
+  const copyPatientId = () => {
+    navigator.clipboard.writeText(patient.id.toUpperCase());
+    setCopied(true);
+    toast.success('Patient ID copied!');
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <DashboardLayout>
@@ -41,6 +56,28 @@ export default function PatientDetail() {
           <ArrowLeft size={20} />
           <span>Back</span>
         </button>
+
+        {/* Patient ID Card */}
+        <div className="card-medical bg-primary/5 border-primary/20 mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <QrCode size={24} className="text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground">Patient ID</p>
+              <p className="text-xl font-bold font-mono text-primary">{patient.id.toUpperCase()}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyPatientId}
+              className="flex items-center gap-2"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? 'Copied' : 'Copy'}
+            </Button>
+          </div>
+        </div>
 
         {/* Patient Header */}
         <div className="card-medical mb-6">
@@ -68,49 +105,60 @@ export default function PatientDetail() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          {canEdit && (
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3"
-              onClick={() => navigate(`/patients/${id}/edit`)}
-            >
-              <Edit size={20} className="mb-1" />
-              <span className="text-xs">Edit</span>
-            </Button>
-          )}
-          {canHealthCheck && (
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3"
-              onClick={() => navigate(`/patients/${id}/health-check`)}
-            >
-              <Stethoscope size={20} className="mb-1" />
-              <span className="text-xs">Health Check</span>
-            </Button>
-          )}
-          {canSchedule && (
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3"
-              onClick={() => navigate('/appointments/new')}
-            >
-              <Plus size={20} className="mb-1" />
-              <span className="text-xs">Appointment</span>
-            </Button>
-          )}
-          {canDischarge && patient.status === 'admitted' && (
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3 text-warning hover:text-warning"
-              onClick={() => navigate(`/patients/${id}/discharge`)}
-            >
-              <LogOut size={20} className="mb-1" />
-              <span className="text-xs">Discharge</span>
-            </Button>
-          )}
-        </div>
+        {/* Quick Actions - Based on Role */}
+        {!isAdmin && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            {canEdit && (
+              <Button 
+                variant="outline" 
+                className="flex-col h-auto py-3"
+                onClick={() => navigate(`/patients/${id}/edit`)}
+              >
+                <Edit size={20} className="mb-1" />
+                <span className="text-xs">Edit</span>
+              </Button>
+            )}
+            {canHealthCheck && (
+              <Button 
+                variant="outline" 
+                className="flex-col h-auto py-3"
+                onClick={() => navigate(`/patients/${id}/health-check`)}
+              >
+                <Stethoscope size={20} className="mb-1" />
+                <span className="text-xs">Health Check</span>
+              </Button>
+            )}
+            {canSchedule && (
+              <Button 
+                variant="outline" 
+                className="flex-col h-auto py-3"
+                onClick={() => navigate('/appointments/new')}
+              >
+                <Plus size={20} className="mb-1" />
+                <span className="text-xs">Schedule</span>
+              </Button>
+            )}
+            {canDischarge && patient.status === 'admitted' && (
+              <Button 
+                variant="outline" 
+                className="flex-col h-auto py-3 text-warning hover:text-warning"
+                onClick={() => navigate(`/patients/${id}/discharge`)}
+              >
+                <LogOut size={20} className="mb-1" />
+                <span className="text-xs">Discharge</span>
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Admin View Only Notice */}
+        {isAdmin && (
+          <div className="bg-muted/50 border border-border rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              👁️ Admin View Only - You can view patient details but cannot modify them
+            </p>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar">
@@ -227,6 +275,12 @@ export default function PatientDetail() {
                   <p className="font-medium">{patient.assignedPhysiotherapistName || 'Not Assigned'}</p>
                 </div>
               </div>
+              {patient.medicalHistory && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground">Medical History</p>
+                  <p className="font-medium mt-1">{patient.medicalHistory}</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -261,9 +315,26 @@ export default function PatientDetail() {
                         <p className="text-xs text-muted-foreground">Temp</p>
                       </div>
                     )}
+                    {record.heartRate && (
+                      <div className="text-center p-2 bg-accent rounded-lg">
+                        <p className="text-sm font-medium">{record.heartRate}</p>
+                        <p className="text-xs text-muted-foreground">Heart Rate</p>
+                      </div>
+                    )}
+                    {record.weight && (
+                      <div className="text-center p-2 bg-accent rounded-lg">
+                        <p className="text-sm font-medium">{record.weight} kg</p>
+                        <p className="text-xs text-muted-foreground">Weight</p>
+                      </div>
+                    )}
                   </div>
                   {record.notes && (
                     <p className="text-sm text-muted-foreground">{record.notes}</p>
+                  )}
+                  {record.prescription && (
+                    <div className="mt-2 p-2 bg-primary/5 rounded-lg">
+                      <p className="text-xs text-primary font-medium">Prescription: {record.prescription}</p>
+                    </div>
                   )}
                 </div>
               ))
@@ -288,6 +359,9 @@ export default function PatientDetail() {
                     <div>
                       <p className="font-medium">{apt.date} at {apt.time}</p>
                       <p className="text-sm text-muted-foreground capitalize">{apt.type}</p>
+                      {apt.physiotherapistName && (
+                        <p className="text-xs text-secondary">Therapist: {apt.physiotherapistName}</p>
+                      )}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm ${
                       apt.status === 'upcoming' ? 'bg-primary/10 text-primary' :

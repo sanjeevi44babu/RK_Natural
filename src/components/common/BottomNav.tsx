@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, Settings, User, ClipboardList } from 'lucide-react';
+import { Home, Calendar, Users, Settings, User, ClipboardList, Clock } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -31,7 +31,7 @@ export function BottomNav() {
         return [
           ...baseItems,
           { icon: Users, label: 'Patients', path: '/patients' },
-          { icon: Calendar, label: 'Appointments', path: '/appointments' },
+          { icon: Clock, label: 'Schedule', path: '/my-schedule' },
           { icon: User, label: 'Profile', path: '/profile' },
         ];
       case 'physiotherapist':

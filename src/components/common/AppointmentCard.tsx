@@ -16,7 +16,7 @@ export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) 
 
   return (
     <div 
-      className="card-medical flex items-center gap-4 animate-fade-in cursor-pointer"
+      className="card-medical flex items-center gap-4 animate-fade-in cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-200"
       onClick={onClick}
     >
       <Avatar name={appointment.patientName} size="lg" />
@@ -43,7 +43,7 @@ export function AppointmentCard({ appointment, onClick }: AppointmentCardProps) 
         </span>
       </div>
 
-      <button className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+      <button className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200">
         Details
       </button>
     </div>

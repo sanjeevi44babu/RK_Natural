@@ -38,6 +38,9 @@ import AllocateRoom from "./pages/AllocateRoom";
 import HealthCheck from "./pages/HealthCheck";
 import CreateAppointment from "./pages/CreateAppointment";
 import DischargePatient from "./pages/DischargePatient";
+import EditProfile from "./pages/EditProfile";
+import ChangePassword from "./pages/ChangePassword";
+import DoctorSchedule from "./pages/DoctorSchedule";
 
 const queryClient = new QueryClient();
 
@@ -101,6 +104,9 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/settings/*" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+      <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+      <Route path="/my-schedule" element={<ProtectedRoute><DoctorSchedule /></ProtectedRoute>} />
       
       {/* Catch-all */}
       <Route path="*" element={<NotFound />} />

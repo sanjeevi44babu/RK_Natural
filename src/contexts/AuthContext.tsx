@@ -6,6 +6,7 @@ interface AuthContextType extends AuthState {
   signup: (data: SignUpData) => Promise<boolean>;
   logout: () => void;
   setUserRole: (role: UserRole) => void;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -129,6 +130,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [authState.user]);
 
+  const updateUser = useCallback((updatedUser: User) => {
+    setAuthState(prev => ({
+      ...prev,
+      user: updatedUser,
+    }));
+    localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+  }, []);
+
   // Check for stored user on mount
   React.useEffect(() => {
     const storedUser = localStorage.getItem('auth_user');
@@ -147,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...authState, login, signup, logout, setUserRole }}>
+    <AuthContext.Provider value={{ ...authState, login, signup, logout, setUserRole, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -47,6 +47,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           ...baseItems,
           { icon: Users, label: 'Patients', path: '/patients' },
           { icon: Calendar, label: 'Appointments', path: '/appointments' },
+          { icon: Calendar, label: 'My Schedule', path: '/my-schedule' },
           { icon: ClipboardList, label: 'New Patient', path: '/patients/new' },
           { icon: User, label: 'Profile', path: '/profile' },
         ];

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight, Moon, Sun } from 'lucide-react';
+import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight, Lock, Edit } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Avatar } from '@/components/common/Avatar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,7 +17,8 @@ export default function Settings() {
     {
       title: 'Account',
       items: [
-        { icon: User, label: 'Profile Settings', path: '/profile' },
+        { icon: Edit, label: 'Edit Profile', path: '/profile/edit' },
+        { icon: Lock, label: 'Change Password', path: '/change-password' },
         { icon: Bell, label: 'Notifications', path: '/settings/notifications' },
         { icon: Shield, label: 'Privacy & Security', path: '/settings/privacy' },
       ],
@@ -40,7 +41,10 @@ export default function Settings() {
         </div>
 
         {/* Profile Card */}
-        <div className="card-medical flex items-center gap-4">
+        <div 
+          className="card-medical flex items-center gap-4 cursor-pointer hover:border-primary/50"
+          onClick={() => navigate('/profile')}
+        >
           <Avatar name={user?.fullName || 'User'} size="lg" />
           <div className="flex-1">
             <h2 className="font-semibold">{user?.fullName}</h2>
