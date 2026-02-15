@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NatureCure HMS - Healthcare Management System Design System */
+
+@layer base {
+  :root {
+    /* Primary Green - Medical/Healthcare theme */
+    --primary: 142 76% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 142 76% 90%;
+    --primary-dark: 142 76% 40%;
+    
+    /* Secondary Blue - Accent color */
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 217 91% 90%;
+    
+    /* Backgrounds */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    
+    /* Card backgrounds with subtle green tint */
+    --card: 142 50% 98%;
+    --card-foreground: 222 47% 11%;
+    --card-border: 142 50% 85%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    /* Muted elements */
+    --muted: 142 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    /* Accent */
+    --accent: 142 50% 94%;
+    --accent-foreground: 142 76% 30%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Success */
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Warning */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* Borders & Inputs */
+    --border: 142 30% 82%;
+    --input: 142 30% 90%;
+    --ring: 142 76% 56%;
+    
+    --radius: 0.75rem;
+    
+    /* Sidebar for dashboard */
+    --sidebar-background: 142 50% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 142 76% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 142 50% 94%;
+    --sidebar-accent-foreground: 142 76% 30%;
+    --sidebar-border: 142 30% 85%;
+    --sidebar-ring: 142 76% 56%;
+    
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 56%) 0%, hsl(142 76% 45%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(142 76% 56%) 0%, hsl(142 76% 45%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(142 50% 98%) 0%, hsl(142 50% 95%) 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(142 30% 50% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(142 30% 50% / 0.1), 0 2px 4px -2px hsl(142 30% 50% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(142 30% 50% / 0.1), 0 4px 6px -4px hsl(142 30% 50% / 0.1);
+    --shadow-card: 0 4px 20px -4px hsl(142 50% 50% / 0.15);
+  }
+
+  .dark {
+    --primary: 142 76% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 142 40% 20%;
+    --primary-dark: 142 76% 60%;
+    
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+    
+    --card: 222 47% 12%;
+    --card-foreground: 210 40% 98%;
+    --card-border: 222 30% 25%;
+    
+    --popover: 222 47% 12%;
+    --popover-foreground: 210 40% 98%;
+    
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    
+    --accent: 142 30% 15%;
+    --accent-foreground: 142 76% 70%;
+    
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 217 33% 25%;
+    --input: 217 33% 20%;
+    --ring: 142 76% 50%;
+    
+    --sidebar-background: 222 47% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 142 76% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 142 30% 15%;
+    --sidebar-accent-foreground: 142 76% 70%;
+    --sidebar-border: 217 33% 25%;
+    --sidebar-ring: 142 76% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Primary button with gradient */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           rounded-xl px-6 py-3 font-medium transition-all duration-200
+           shadow-md hover:shadow-lg active:scale-[0.98];
+  }
+  
+  /* Secondary/outline button */
+  .btn-secondary {
+    @apply border-2 border-primary text-primary bg-transparent
+           hover:bg-primary hover:text-primary-foreground
+           rounded-xl px-6 py-3 font-medium transition-all duration-200;
+  }
+  
+  /* Card with green border accent */
+  .card-medical {
+    @apply bg-card border-2 border-card-border rounded-2xl p-4
+           shadow-[var(--shadow-card)] transition-all duration-200
+           hover:shadow-lg hover:border-primary/50;
+  }
+  
+  /* Stats card */
+  .card-stat {
+    @apply bg-card border border-card-border rounded-xl p-4
+           flex flex-col items-center justify-center gap-1
+           min-w-[80px] transition-all duration-200 hover:bg-accent;
+  }
+  
+  /* Navigation item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl
+           text-foreground/70 hover:text-foreground hover:bg-accent
+           transition-all duration-200 cursor-pointer;
+  }
+  
+  .nav-item-active {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl
+           bg-primary text-primary-foreground font-medium
+           shadow-md cursor-pointer;
+  }
+  
+  /* User/Patient card */
+  .user-card {
+    @apply bg-card border border-card-border rounded-xl p-4
+           flex items-center gap-4 transition-all duration-200
+           hover:border-primary/50 hover:shadow-md cursor-pointer;
+  }
+  
+  /* Avatar with status indicator */
+  .avatar-wrapper {
+    @apply relative w-12 h-12 rounded-full bg-muted flex items-center justify-center
+           border-2 border-card-border overflow-hidden;
+  }
+  
+  /* Status badges */
+  .badge-success {
+    @apply bg-success/10 text-success border border-success/20
+           px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-warning {
+    @apply bg-warning/10 text-warning border border-warning/20
+           px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-primary/10 text-primary border border-primary/20
+           px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .badge-secondary {
+    @apply bg-secondary/10 text-secondary border border-secondary/20
+           px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  /* Input styling */
+  .input-medical {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-input
+           bg-background focus:border-primary focus:ring-2 focus:ring-primary/20
+           outline-none transition-all duration-200 placeholder:text-muted-foreground;
+  }
+  
+  /* Calendar day */
+  .calendar-day {
+    @apply w-10 h-10 rounded-full flex items-center justify-center
+           text-sm font-medium cursor-pointer transition-all duration-200
+           hover:bg-accent;
+  }
+  
+  .calendar-day-active {
+    @apply w-10 h-10 rounded-full flex items-center justify-center
+           text-sm font-medium cursor-pointer bg-primary text-primary-foreground
+           shadow-md;
+  }
+  
+  .calendar-day-today {
+    @apply w-10 h-10 rounded-full flex items-center justify-center
+           text-sm font-medium cursor-pointer border-2 border-primary text-primary;
+  }
+  
+  /* Role card */
+  .role-card {
+    @apply flex items-center gap-3 p-3 rounded-xl border-2 border-card-border
+           bg-card hover:border-primary/50 hover:bg-accent cursor-pointer
+           transition-all duration-200;
+  }
+  
+  /* Page container */
+  .page-container {
+    @apply min-h-screen bg-background;
+  }
+  
+  /* Mobile header */
+  .mobile-header {
+    @apply flex items-center justify-between px-4 py-3 bg-background
+           border-b border-border sticky top-0 z-50;
+  }
+  
+  /* Dashboard header with green background */
+  .dashboard-header {
+    @apply bg-primary text-primary-foreground px-4 py-6 rounded-b-3xl;
+  }
+  
+  /* Floating action button */
+  .fab {
+    @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary
+           text-primary-foreground shadow-lg flex items-center justify-center
+           hover:bg-primary/90 active:scale-95 transition-all duration-200 z-40;
+  }
+  
+  /* Schedule time slot */
+  .time-slot {
+    @apply px-4 py-2 rounded-xl border border-card-border bg-card
+           text-sm font-medium cursor-pointer transition-all duration-200
+           hover:border-primary hover:bg-accent;
+  }
+  
+  .time-slot-active {
+    @apply px-4 py-2 rounded-xl bg-primary text-primary-foreground
+           text-sm font-medium cursor-pointer shadow-md;
+  }
+}
+
+@layer utilities {
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+  
+  /* Glassmorphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Safe area for mobile */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
