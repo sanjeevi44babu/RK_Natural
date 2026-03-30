@@ -18,7 +18,7 @@ export class ApiError extends Error {
 // =====================
 // BASE CONFIG
 // =====================
-const API_BASE = (import.meta.env.VITE_API_URL ?? "http://localhost:5000/api").replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_URL ?? "https://rk-natural-backend.onrender.com/api").replace(/\/$/, "");
 const TOKEN_KEY = "auth_token";
 
 // =====================
