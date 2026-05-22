@@ -102,6 +102,8 @@ export interface Appointment {
   duration: number;
   status: 'upcoming' | 'completed' | 'cancelled' | 'in-progress';
   notes?: string;
+  startTime?: string;
+  endTime?: string;
   type: 'consultation' | 'therapy' | 'follow-up' | 'checkup' | 'discharge';
   roomNumber?: string;
   createdAt: string;

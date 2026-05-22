@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Users, Calendar, ChevronRight, CheckCircle, 
+import {
+  Users, Calendar, ChevronRight, CheckCircle,
   Clock, Activity, Eye, QrCode, Stethoscope, LogOut
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -47,19 +47,30 @@ export default function PhysiotherapistDashboard() {
     pending: upcomingAppointments.length,
   };
 
-  // One-click complete treatment
-  const handleCompleteTreatment = (appointmentId: string, patientId: string, e: React.MouseEvent) => {
+  // Start treatment
+  const handleStartTreatment = (appointmentId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    updateAppointment(appointmentId, { status: 'completed' });
-    
+
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    updateAppointment(appointmentId, { status: 'in-progress', startTime: time });
+
+    toast.success(`Treatment started at ${time}`);
+  };
+
+  // End treatment
+  const handleEndTreatment = (appointmentId: string, patientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    updateAppointment(appointmentId, { status: 'completed', endTime: time });
+
     addHealthRecord({
       id: `hr-${Date.now()}`,
       patientId,
       physiotherapistId: user?.id,
       physiotherapistName: user?.fullName,
       date: new Date().toISOString().split('T')[0],
-      notes: 'Therapy session completed successfully',
+      notes: `Therapy session completed successfully. Ended at ${time}`,
       createdAt: new Date().toISOString(),
     });
 
@@ -71,7 +82,7 @@ export default function PhysiotherapistDashboard() {
       role: 'all',
     });
 
-    toast.success('Treatment completed! Health record added.');
+    toast.success(`Treatment completed at ${time}! Health record added.`);
   };
 
   // Discharge patient
@@ -100,10 +111,9 @@ export default function PhysiotherapistDashboard() {
   const malePatients = displayPatients.filter(p => p.gender?.toLowerCase() === 'male');
   const otherPatients = displayPatients.filter(p => !['male', 'female'].includes(p.gender?.toLowerCase() || ''));
 
-  const PatientGroup = ({ title, appointments, patients, type }: { 
-    title: string; 
-    appointments?: typeof todayAppointments; 
-    patients?: typeof displayPatients;
+  const PatientGroup = ({ title, appointments, type }: {
+    title: string;
+    appointments?: typeof todayAppointments;
     type: 'treatment' | 'therapy'
   }) => {
     if (type === 'treatment') {
@@ -116,9 +126,9 @@ export default function PhysiotherapistDashboard() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {appointments.map((apt) => (
-              <div 
-                key={apt.id} 
-                className="card-medical p-4 cursor-pointer hover:border-primary/50 transition-colors relative group animate-fade-in"
+              <div
+                key={apt.id}
+                className="card-medical p-3 md:p-4 cursor-pointer hover:border-primary/50 transition-colors relative group animate-fade-in"
                 onClick={() => navigate(`/patients/${apt.patientId}`)}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -131,33 +141,88 @@ export default function PhysiotherapistDashboard() {
                       <p className="text-xs text-muted-foreground">{apt.patientAge || 'N/A'}Y • {apt.patientGender || 'Unspecified'}</p>
                     </div>
                   </div>
-                  <span className={`px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase ${
-                    apt.status === 'completed' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-                  }`}>
+                  <span className={`px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase ${apt.status === 'completed' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
+                    }`}>
                     {apt.status}
                   </span>
                 </div>
-                
-                <div className="space-y-2 bg-accent/30 rounded-xl p-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-1.5"><Calendar size={14} /> Date</span>
-                    <span className="font-medium text-foreground">{apt.date}</span>
+
+                <div className="grid grid-cols-2 gap-3 mb-1">
+                  {/* Left Column Info */}
+                  <div className="space-y-2 bg-accent/30 rounded-xl p-3 flex flex-col justify-center">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground flex items-center gap-1"><Calendar size={12} /> Date</span>
+                      <span className="font-semibold text-foreground text-right">{apt.date}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground flex items-center gap-1"><Clock size={12} /> Time</span>
+                      <span className="font-semibold text-foreground text-right">{apt.time} ({apt.duration}m)</span>
+                    </div>
+
+                    {/* Treatment Plan moved to Left Column */}
+                    {(() => {
+                      const patientObj = (patients || []).find(p => 
+                        p.id === apt.patientId || 
+                        (p as any)._id === apt.patientId ||
+                        String((p as any)._id) === String(apt.patientId) ||
+                        p.fullName === apt.patientName
+                      );
+                      const treatmentPlan = patientObj?.treatmentPlan;
+                      
+                      return (
+                        <div className="mt-1 pt-2 border-t border-border/50">
+                          <span className="text-[9px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1 text-secondary">
+                            <Activity size={10} /> Treatment Plan
+                          </span>
+                          <p className={`font-bold text-xs leading-normal line-clamp-2 overflow-hidden ${treatmentPlan ? 'text-foreground' : 'text-muted-foreground italic'}`} title={treatmentPlan || "No Treatment Plan assigned"}>
+                            {treatmentPlan || "Not Assigned"}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-1.5"><Clock size={14} /> Time</span>
-                    <span className="font-medium text-foreground">{apt.time} ({apt.duration}m)</span>
+
+                  {/* Right Column: Start/End Times and Buttons */}
+                  <div className="flex flex-col justify-between bg-accent/10 rounded-xl p-2 border border-border/30">
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div className="flex flex-col items-center justify-center p-1.5 bg-background rounded-lg border border-border/50">
+                        <span className="text-[9px] text-muted-foreground uppercase font-bold flex items-center gap-1"><Clock size={9} /> Start</span>
+                        <span className="font-bold text-xs text-primary mt-0.5">{apt.startTime || '--:--'}</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center p-1.5 bg-background rounded-lg border border-border/50">
+                        <span className="text-[9px] text-muted-foreground uppercase font-bold flex items-center gap-1"><Clock size={9} /> End</span>
+                        <span className="font-bold text-xs text-success mt-0.5">{apt.endTime || '--:--'}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Split Buttons */}
+                    {(apt.status === 'upcoming' || apt.status === 'in-progress') && (
+                      <div className="flex gap-2 w-full mt-auto">
+                        <Button
+                          size="sm"
+                          className={`flex-1 text-[10px] h-7 px-0 font-bold ${apt.status === 'upcoming' ? 'bg-primary hover:bg-primary/90 text-white' : 'bg-muted text-muted-foreground opacity-50 cursor-not-allowed'}`}
+                          disabled={apt.status !== 'upcoming'}
+                          onClick={(e) => handleStartTreatment(apt.id, e)}
+                        >
+                          Start
+                        </Button>
+                        <Button
+                          size="sm"
+                          className={`flex-1 text-[10px] h-7 px-0 font-bold ${apt.status === 'in-progress' ? 'bg-success hover:bg-success/90 text-white' : 'bg-muted text-muted-foreground opacity-50 cursor-not-allowed'}`}
+                          disabled={apt.status !== 'in-progress'}
+                          onClick={(e) => handleEndTreatment(apt.id, apt.patientId, e)}
+                        >
+                          End
+                        </Button>
+                      </div>
+                    )}
+                    {apt.status === 'completed' && (
+                       <div className="mt-auto flex items-center justify-center gap-1 text-success text-[10px] font-bold bg-success/10 py-1 rounded-md">
+                         <CheckCircle size={10} /> Completed
+                       </div>
+                    )}
                   </div>
                 </div>
-
-                {apt.status !== 'completed' && (
-                  <Button 
-                    className="w-full mt-3 btn-primary"
-                    onClick={(e) => handleCompleteTreatment(apt.id, apt.patientId, e)}
-                  >
-                    <CheckCircle size={16} className="mr-2" />
-                    Complete Treatment
-                  </Button>
-                )}
               </div>
             ))}
           </div>
@@ -204,7 +269,7 @@ export default function PhysiotherapistDashboard() {
             </div>
             <NotificationBell />
           </div>
-          
+
           <CalendarStrip selectedDate={selectedDate} onDateSelect={setSelectedDate} />
         </div>
 
@@ -227,17 +292,15 @@ export default function PhysiotherapistDashboard() {
             <div className="flex p-1 bg-accent rounded-xl w-fit">
               <button
                 onClick={() => setViewMode('treatment')}
-                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  viewMode === 'treatment' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
-                }`}
+                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${viewMode === 'treatment' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                  }`}
               >
                 Treatments (Today)
               </button>
               <button
                 onClick={() => setViewMode('therapy')}
-                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  viewMode === 'therapy' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
-                }`}
+                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${viewMode === 'therapy' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                  }`}
               >
                 Therapy List
               </button>

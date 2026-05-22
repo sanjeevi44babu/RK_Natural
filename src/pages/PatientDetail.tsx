@@ -85,6 +85,37 @@ export default function PatientDetail() {
   const otherTherapists = therapists.filter(t => t.gender?.toLowerCase() !== 'male' && t.gender?.toLowerCase() !== 'female');
   const canSchedule = isSupervisor;
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const therapistTodayApt = isTherapist ? patientAppointments.find(a => a.date === todayStr && a.physiotherapistId === user?.id && a.status !== 'cancelled') : null;
+
+  const handleStartTreatment = async (appointmentId: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    await updateAppointment(appointmentId, { status: 'in-progress', startTime: time });
+    toast.success(`Treatment started at ${time}`);
+  };
+
+  const handleEndTreatment = async (appointmentId: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    await updateAppointment(appointmentId, { status: 'completed', endTime: time });
+
+    await addHealthRecord({
+      patientId: patient.id || (patient as any)._id,
+      physiotherapistId: user?.id,
+      physiotherapistName: user?.fullName,
+      date: new Date().toISOString().split('T')[0],
+      notes: `Therapy session completed successfully. Ended at ${time}`,
+    });
+
+    addNotification({
+      title: 'Treatment Completed',
+      message: `${user?.fullName} completed therapy for ${patient.fullName}.`,
+      type: 'success',
+      role: 'all',
+    });
+
+    toast.success(`Treatment completed at ${time}! Health record added.`);
+  };
+
   const copyPatientId = () => {
     const pId = patient.id || (patient as any)._id || 'N/A';
     navigator.clipboard.writeText(pId.toUpperCase());
@@ -680,10 +711,71 @@ export default function PatientDetail() {
                   <p className="font-medium text-sm text-primary">{patient.prescription}</p>
                 </div>
               )}
-              {patient.treatmentPlan && (
+              {(patient.treatmentPlan || (isTherapist && therapistTodayApt)) && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Treatment Plan</p>
-                  <p className="text-sm">{patient.treatmentPlan}</p>
+                  <div className="flex flex-col md:flex-row justify-between gap-4">
+                    <div className="flex-1">
+                      {patient.treatmentPlan && (
+                        <>
+                          <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Treatment Plan</p>
+                          <p className="text-sm">{patient.treatmentPlan}</p>
+                        </>
+                      )}
+                    </div>
+
+                    {/* {isTherapist && therapistTodayApt && (
+                      <div className="w-full md:w-64 card-medical p-3 border-2 border-primary/10 shadow-sm shrink-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-bold tracking-wider uppercase text-muted-foreground">Today's Session</span>
+                          <span className={`px-2 py-0.5 rounded-md text-[8px] font-bold tracking-wider uppercase ${
+                            therapistTodayApt.status === 'completed' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
+                          }`}>
+                            {therapistTodayApt.status}
+                          </span>
+                        </div>
+                        
+                        <div className="space-y-1.5 mb-3 bg-accent/30 rounded-lg p-2 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground flex items-center gap-1"><Clock size={12} /> Time</span>
+                            <span className="font-medium text-foreground">{therapistTodayApt.time}</span>
+                          </div>
+                          {(therapistTodayApt.startTime || therapistTodayApt.endTime) && (
+                            <div className="grid grid-cols-2 gap-2 mt-1.5 pt-1.5 border-t border-border/50">
+                              {therapistTodayApt.startTime ? (
+                                <div className="flex flex-col">
+                                  <span className="text-[9px] text-muted-foreground flex items-center gap-1"><Clock size={9} /> Start</span>
+                                  <span className="font-bold text-primary mt-0.5">{therapistTodayApt.startTime}</span>
+                                </div>
+                              ) : <div />}
+                              {therapistTodayApt.endTime && (
+                                <div className="flex flex-col items-end">
+                                  <span className="text-[9px] text-muted-foreground flex items-center gap-1"><Clock size={9} /> End</span>
+                                  <span className="font-bold text-success mt-0.5">{therapistTodayApt.endTime}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {therapistTodayApt.status === 'upcoming' && (
+                          <Button 
+                            className="w-full h-8 text-xs btn-primary bg-primary hover:bg-primary/90"
+                            onClick={() => handleStartTreatment(therapistTodayApt.id || (therapistTodayApt as any)._id)}
+                          >
+                            <Activity size={14} className="mr-1.5" /> Start Time
+                          </Button>
+                        )}
+                        {therapistTodayApt.status === 'in-progress' && (
+                          <Button 
+                            className="w-full h-8 text-xs btn-primary bg-success hover:bg-success/90"
+                            onClick={() => handleEndTreatment(therapistTodayApt.id || (therapistTodayApt as any)._id)}
+                          >
+                            <CheckCircle size={14} className="mr-1.5" /> End Time
+                          </Button>
+                        )}
+                      </div>
+                    )} */}
+                  </div>
                 </div>
               )}
               {patient.followUpDate && (

@@ -106,7 +106,7 @@ export default function Patients() {
         <div className="flex items-center justify-between gap-2">
           <h1 className="text-xl md:text-2xl font-bold truncate">Patients</h1>
           <div className="flex items-center gap-2">
-            <button 
+            <button
               onClick={async () => {
                 const toastId = toast.loading('Refreshing patient data...');
                 try {
@@ -124,7 +124,7 @@ export default function Patients() {
             </button>
 
             {user?.role === 'admin' && (
-              <button 
+              <button
                 onClick={handleExportCSV}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 md:px-4 md:py-2 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary/20 transition-all font-bold text-[10px] md:text-sm shadow-sm border border-secondary/20 group shrink-0"
                 title="Download CSV"
@@ -138,38 +138,38 @@ export default function Patients() {
         </div>
 
         <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-3 items-center">
-          <div className="flex-1 w-full">
-            <SearchBar 
-              placeholder="Search by patient name..." 
-              value={search} 
-              onChange={setSearch} 
-            />
-          </div>
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative flex-1 md:w-48 group">
-              <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 group-focus-within:text-primary transition-colors" />
-              <Input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-                className="pl-9 h-10 bg-white/50 border-primary/10 rounded-xl text-xs font-bold focus-visible:ring-primary shadow-sm hover:border-primary/30 transition-all cursor-pointer"
-                style={{ colorScheme: 'initial' }}
-                title="Filter by Registration Date"
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-3 items-center">
+            <div className="flex-1 w-full">
+              <SearchBar
+                placeholder="Search by patient name..."
+                value={search}
+                onChange={setSearch}
               />
-              {filterDate && (
-                <button 
-                  onClick={() => setFilterDate('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-destructive transition-colors"
-                  title="Clear Date Filter"
-                >
-                  <XCircle size={14} />
-                </button>
-              )}
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="relative flex-1 md:w-48 group">
+                <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 group-focus-within:text-primary transition-colors" />
+                <Input
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="pl-9 h-10 bg-white/50 border-primary/10 rounded-xl text-xs font-bold focus-visible:ring-primary shadow-sm hover:border-primary/30 transition-all cursor-pointer"
+                  style={{ colorScheme: 'initial' }}
+                  title="Filter by Registration Date"
+                />
+                {filterDate && (
+                  <button
+                    onClick={() => setFilterDate('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-destructive transition-colors"
+                    title="Clear Date Filter"
+                  >
+                    <XCircle size={14} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
         </div>
 
         {/* Patient List */}
@@ -195,9 +195,9 @@ export default function Patients() {
                       const latestApt = appointments.find(a => a.patientId === (patient.id || (patient as any)._id) && a.status !== 'cancelled' && a.type === 'therapy');
                       const therapist = users.find(u => (u.id || (u as any)._id) === (patient.assignedPhysiotherapistId || latestApt?.physiotherapistId));
                       return (
-                        <tr 
-                          key={patient.id || (patient as any)._id} 
-                          className="hover:bg-accent/30 transition-colors cursor-pointer group" 
+                        <tr
+                          key={patient.id || (patient as any)._id}
+                          className="hover:bg-accent/30 transition-colors cursor-pointer group"
                           onClick={() => navigate(`/patients/${patient.id || (patient as any)._id}`)}
                         >
                           <td className="px-3 md:px-6 py-4 md:py-6">
@@ -252,219 +252,217 @@ export default function Patients() {
               </div>
             ) : (
               filteredPatients.map((patient) => (
-              <div key={patient.id || (patient as any)._id} className="user-card" onClick={() => navigate(`/patients/${patient.id || (patient as any)._id}`)}>
-                <div className="avatar-wrapper">
-                  <span className="text-primary font-semibold">
-                    {(patient.fullName || 'Patient').split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2)}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-foreground truncate">{patient.fullName || 'No Name'}</h3>
-                    <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full border ${
-                      patient.status === 'admitted' ? 'bg-success/10 text-success border-success/20' : 'bg-secondary/10 text-secondary border-secondary/20'
-                    }`}>
-                      {patient.status || 'outpatient'}
+                <div key={patient.id || (patient as any)._id} className="user-card" onClick={() => navigate(`/patients/${patient.id || (patient as any)._id}`)}>
+                  <div className="avatar-wrapper">
+                    <span className="text-primary font-semibold">
+                      {(patient.fullName || 'Patient').split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2)}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{patient.age} years • {patient.gender}</p>
-                  <p className="text-[10px] text-muted-foreground/70 italic flex items-center gap-1 mt-0.5">
-                    <Calendar size={10} />
-                    Registered: {patient.createdAt ? new Date(patient.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'N/A'}
-                  </p>
-                  {patient.roomNumber && (
-                    <p className="text-xs text-primary">Room {patient.roomNumber}, {patient.blockName}</p>
-                  )}
-                </div>
-                <div className="flex flex-col items-end gap-1.5" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-2">
-                    {/* Quick Schedule/Reschedule Button (Supervisor only) */}
-                    {user?.role === 'supervisor' && (() => {
-                      const todayStr = new Date().toISOString().split('T')[0];
-                      const todayApt = appointments.find(a => 
-                        a.patientId === (patient.id || (patient as any)._id) && 
-                        a.date === todayStr && 
-                        a.status !== 'cancelled' &&
-                        a.type === 'therapy'
-                      );
-                      
-                      return (
-                        <button
-                          onClick={() => {
-                            setSchedulingPatient(patient);
-                            if (todayApt) {
-                              setReschedulingAptId(todayApt.id || (todayApt as any)._id);
-                              setScheduleDate(todayApt.date);
-                              setScheduleTime(todayApt.time);
-                              setScheduleTherapistId(todayApt.physiotherapistId);
-                            } else {
-                              setReschedulingAptId(null);
-                              setScheduleDate(new Date().toISOString().split('T')[0]);
-                              setScheduleTime('09:00');
-                              setScheduleOutTime('09:45');
-                              setScheduleTherapistId('');
-                            }
-                            setIsScheduling(true);
-                          }}
-                          className={`p-2 rounded-xl transition-all flex items-center gap-2 group shadow-sm border ${
-                            todayApt 
-                              ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20' 
-                              : 'bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20'
-                          }`}
-                          title={todayApt ? "Reschedule Appointment" : "Quick Schedule"}
-                        >
-                          {todayApt ? <RefreshCcw size={18} className="group-hover:rotate-180 transition-transform duration-500" /> : <Calendar size={18} className="group-hover:scale-110 transition-transform" />}
-                          <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
-                            {todayApt ? "Reschedule" : "Schedule"}
-                          </span>
-                        </button>
-                      );
-                    })()}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-foreground truncate">{patient.fullName || 'No Name'}</h3>
+                      <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full border ${patient.status === 'admitted' ? 'bg-success/10 text-success border-success/20' : 'bg-secondary/10 text-secondary border-secondary/20'
+                        }`}>
+                        {patient.status || 'outpatient'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{patient.age} years • {patient.gender}</p>
+                    <p className="text-[10px] text-muted-foreground/70 italic flex items-center gap-1 mt-0.5">
+                      <Calendar size={10} />
+                      Registered: {patient.createdAt ? new Date(patient.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'N/A'}
+                    </p>
+                    {patient.roomNumber && (
+                      <p className="text-xs text-primary">Room {patient.roomNumber}, {patient.blockName}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2">
+                      {/* Quick Schedule/Reschedule Button (Supervisor only) */}
+                      {user?.role === 'supervisor' && (() => {
+                        const todayStr = new Date().toISOString().split('T')[0];
+                        const todayApt = appointments.find(a =>
+                          a.patientId === (patient.id || (patient as any)._id) &&
+                          a.date === todayStr &&
+                          a.status !== 'cancelled' &&
+                          a.type === 'therapy'
+                        );
 
-                    {/* Status Management - Only for Doctors on this page */}
-                    {user?.role === 'doctor' && (
-                      <Popover>
+                        return (
+                          <button
+                            onClick={() => {
+                              setSchedulingPatient(patient);
+                              if (todayApt) {
+                                setReschedulingAptId(todayApt.id || (todayApt as any)._id);
+                                setScheduleDate(todayApt.date);
+                                setScheduleTime(todayApt.time);
+                                setScheduleTherapistId(todayApt.physiotherapistId);
+                              } else {
+                                setReschedulingAptId(null);
+                                setScheduleDate(new Date().toISOString().split('T')[0]);
+                                setScheduleTime('09:00');
+                                setScheduleOutTime('09:45');
+                                setScheduleTherapistId('');
+                              }
+                              setIsScheduling(true);
+                            }}
+                            className={`p-2 rounded-xl transition-all flex items-center gap-2 group shadow-sm border ${todayApt
+                                ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20'
+                                : 'bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/20'
+                              }`}
+                            title={todayApt ? "Reschedule Appointment" : "Quick Schedule"}
+                          >
+                            {todayApt ? <RefreshCcw size={18} className="group-hover:rotate-180 transition-transform duration-500" /> : <Calendar size={18} className="group-hover:scale-110 transition-transform" />}
+                            <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
+                              {todayApt ? "Reschedule" : "Schedule"}
+                            </span>
+                          </button>
+                        );
+                      })()}
+
+                      {/* Status Management - Only for Doctors on this page */}
+                      {user?.role === 'doctor' && (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className={`h-6 md:h-7 rounded-full flex items-center gap-0.5 md:gap-1 px-0.5 md:px-1 transition-all active:scale-95 overflow-hidden border border-white/10 group ${patient.status === 'admitted'
+                              ? 'bg-success text-white'
+                              : 'bg-secondary text-white'
+                              }`}>
+                              {/* Icon Part */}
+                              <div className="w-4 h-4 md:w-5 md:h-5 rounded-md md:rounded-lg bg-white/20 flex items-center justify-center ml-0.5 shadow-inner">
+                                {patient.status === 'admitted' ? <Check size={10} className="md:w-[12px] md:h-[12px] text-white" /> : <Activity size={10} className="md:w-[12px] md:h-[12px] text-white" />}
+                              </div>
+
+                              {/* Text Part */}
+                              <span className="text-[7px] md:text-[9px] font-bold uppercase tracking-tighter md:tracking-widest px-0.5">
+                                {patient.status || 'outpatient'}
+                              </span>
+
+                              {/* Chevron Only (No divider) */}
+                              <div className="flex items-center h-full px-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <ChevronDown size={8} className="md:w-[10px] md:h-[10px]" />
+                              </div>
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-44 p-2 bg-background/95 backdrop-blur-md border-border shadow-2xl rounded-2xl" align="end">
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 py-1 mb-1 tracking-widest border-b border-border/50">Update Status</p>
+                              <button
+                                onClick={() => {
+                                  updatePatient(patient.id || (patient as any)._id, {
+                                    status: 'admitted',
+                                    assignedDoctorId: user?.id || (user as any)._id,
+                                    assignedDoctorName: user?.fullName
+                                  });
+                                  toast.success(`Status updated: ${patient.fullName} is now Admitted by Dr. ${user?.fullName}`);
+                                }}
+                                className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.status === 'admitted' ? 'bg-success/20 text-success' : 'hover:bg-accent text-muted-foreground'
+                                  }`}
+                              >
+                                <div className={`p-1.5 rounded-lg ${patient.status === 'admitted' ? 'bg-success/20' : 'bg-muted'}`}>
+                                  <Check size={14} />
+                                </div>
+                                Admit Patient
+                              </button>
+                              <button
+                                onClick={() => {
+                                  updatePatient(patient.id || (patient as any)._id, {
+                                    status: 'outpatient',
+                                    assignedDoctorId: user?.id || (user as any)._id,
+                                    assignedDoctorName: user?.fullName
+                                  });
+                                  toast.success(`Status updated: ${patient.fullName} is now Outpatient by Dr. ${user?.fullName}`);
+                                }}
+                                className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.status !== 'admitted' ? 'bg-secondary/20 text-secondary' : 'hover:bg-accent text-muted-foreground'
+                                  }`}
+                              >
+                                <div className={`p-1.5 rounded-lg ${patient.status !== 'admitted' ? 'bg-secondary/20' : 'bg-muted'}`}>
+                                  <Activity size={14} />
+                                </div>
+                                Mark Outpatient
+                              </button>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+
+                    {/* IN/OUT Features (Premium Dropdown - Ultra Compact) */}
+                    {user?.role === 'physiotherapist' && (
+                      <Popover
+                        open={openAttendanceId === String(patient.id || (patient as any)._id)}
+                        onOpenChange={(open) => setOpenAttendanceId(open ? String(patient.id || (patient as any)._id) : null)}
+                      >
                         <PopoverTrigger asChild>
-                          <button className={`h-6 md:h-7 rounded-full flex items-center gap-0.5 md:gap-1 px-0.5 md:px-1 transition-all active:scale-95 overflow-hidden border border-white/10 group ${patient.status === 'admitted'
-                            ? 'bg-success text-white'
-                            : 'bg-secondary text-white'
+                          <button className={`h-6 md:h-7 rounded-full flex items-center gap-0.5 md:gap-1 px-0.5 md:px-1 transition-all active:scale-95 overflow-hidden border border-white/10 group shadow-sm ${patient.outTime ? 'bg-destructive text-white' :
+                            patient.inTime ? 'bg-secondary text-white' :
+                              'bg-primary text-white'
                             }`}>
                             {/* Icon Part */}
                             <div className="w-4 h-4 md:w-5 md:h-5 rounded-md md:rounded-lg bg-white/20 flex items-center justify-center ml-0.5 shadow-inner">
-                              {patient.status === 'admitted' ? <Check size={10} className="md:w-[12px] md:h-[12px] text-white" /> : <Activity size={10} className="md:w-[12px] md:h-[12px] text-white" />}
+                              {patient.outTime ? <LogOut size={10} className="text-white" /> :
+                                patient.inTime ? <LogIn size={10} className="text-white" /> :
+                                  <Clock size={10} className="text-white" />}
                             </div>
 
                             {/* Text Part */}
-                            <span className="text-[7px] md:text-[9px] font-bold uppercase tracking-tighter md:tracking-widest px-0.5">
-                              {patient.status || 'outpatient'}
+                            <span className="text-[7px] md:text-[9px] font-bold uppercase tracking-widest px-1">
+                              {patient.outTime ? 'Marked Out' : patient.inTime ? 'Marked In' : 'Attendance'}
                             </span>
 
-                            {/* Chevron Only (No divider) */}
+                            {/* Chevron Only */}
                             <div className="flex items-center h-full px-1 opacity-80 group-hover:opacity-100 transition-opacity">
                               <ChevronDown size={8} className="md:w-[10px] md:h-[10px]" />
                             </div>
                           </button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-44 p-2 bg-background/95 backdrop-blur-md border-border shadow-2xl rounded-2xl" align="end">
+                        <PopoverContent className="w-48 p-2 bg-background/95 backdrop-blur-md border-border shadow-2xl rounded-2xl" align="end">
                           <div className="space-y-1">
-                            <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 py-1 mb-1 tracking-widest border-b border-border/50">Update Status</p>
+                            <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 py-1 mb-1 tracking-widest border-b border-border/50">Mark Attendance</p>
                             <button
                               onClick={() => {
-                                updatePatient(patient.id || (patient as any)._id, { 
-                                  status: 'admitted',
-                                  assignedDoctorId: user?.id || (user as any)._id,
-                                  assignedDoctorName: user?.fullName
-                                });
-                                toast.success(`Status updated: ${patient.fullName} is now Admitted by Dr. ${user?.fullName}`);
+                                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                setOpenAttendanceId(null);
+                                updatePatient(patient.id || (patient as any)._id, { inTime: time });
+                                toast.success(`In-Time marked: ${time}`);
                               }}
-                              className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.status === 'admitted' ? 'bg-success/20 text-success' : 'hover:bg-accent text-muted-foreground'
+                              className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.inTime ? 'bg-secondary/20 text-secondary' : 'hover:bg-accent text-muted-foreground'
                                 }`}
                             >
-                              <div className={`p-1.5 rounded-lg ${patient.status === 'admitted' ? 'bg-success/20' : 'bg-muted'}`}>
-                                <Check size={14} />
+                              <div className={`p-1.5 rounded-lg ${patient.inTime ? 'bg-secondary/20' : 'bg-muted'}`}>
+                                <LogIn size={14} />
                               </div>
-                              Admit Patient
+                              <div className="text-left">
+                                <p className="leading-none">{patient.inTime ? `IN: ${patient.inTime}` : 'Mark In'}</p>
+                              </div>
                             </button>
                             <button
                               onClick={() => {
-                                updatePatient(patient.id || (patient as any)._id, { 
-                                  status: 'outpatient',
-                                  assignedDoctorId: user?.id || (user as any)._id,
-                                  assignedDoctorName: user?.fullName
-                                });
-                                toast.success(`Status updated: ${patient.fullName} is now Outpatient by Dr. ${user?.fullName}`);
+                                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                setOpenAttendanceId(null);
+                                updatePatient(patient.id || (patient as any)._id, { outTime: time });
+                                toast.success(`Out-Time marked: ${time}`);
                               }}
-                              className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.status !== 'admitted' ? 'bg-secondary/20 text-secondary' : 'hover:bg-accent text-muted-foreground'
+                              className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.outTime ? 'bg-destructive/20 text-destructive' : 'hover:bg-accent text-muted-foreground'
                                 }`}
                             >
-                              <div className={`p-1.5 rounded-lg ${patient.status !== 'admitted' ? 'bg-secondary/20' : 'bg-muted'}`}>
-                                <Activity size={14} />
+                              <div className={`p-1.5 rounded-lg ${patient.outTime ? 'bg-destructive/20' : 'bg-muted'}`}>
+                                <LogOut size={14} />
                               </div>
-                              Mark Outpatient
+                              <div className="text-left">
+                                <p className="leading-none">{patient.outTime ? `OUT: ${patient.outTime}` : 'Mark Out'}</p>
+                              </div>
                             </button>
                           </div>
                         </PopoverContent>
                       </Popover>
                     )}
                   </div>
-
-                  {/* IN/OUT Features (Premium Dropdown - Ultra Compact) */}
-                  {user?.role === 'physiotherapist' && (
-                    <Popover
-                      open={openAttendanceId === String(patient.id || (patient as any)._id)}
-                      onOpenChange={(open) => setOpenAttendanceId(open ? String(patient.id || (patient as any)._id) : null)}
-                    >
-                      <PopoverTrigger asChild>
-                        <button className={`h-6 md:h-7 rounded-full flex items-center gap-0.5 md:gap-1 px-0.5 md:px-1 transition-all active:scale-95 overflow-hidden border border-white/10 group shadow-sm ${patient.outTime ? 'bg-destructive text-white' :
-                          patient.inTime ? 'bg-secondary text-white' :
-                            'bg-primary text-white'
-                          }`}>
-                          {/* Icon Part */}
-                          <div className="w-4 h-4 md:w-5 md:h-5 rounded-md md:rounded-lg bg-white/20 flex items-center justify-center ml-0.5 shadow-inner">
-                            {patient.outTime ? <LogOut size={10} className="text-white" /> :
-                              patient.inTime ? <LogIn size={10} className="text-white" /> :
-                                <Clock size={10} className="text-white" />}
-                          </div>
-
-                          {/* Text Part */}
-                          <span className="text-[7px] md:text-[9px] font-bold uppercase tracking-widest px-1">
-                            {patient.outTime ? 'Marked Out' : patient.inTime ? 'Marked In' : 'Attendance'}
-                          </span>
-
-                          {/* Chevron Only */}
-                          <div className="flex items-center h-full px-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                            <ChevronDown size={8} className="md:w-[10px] md:h-[10px]" />
-                          </div>
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-48 p-2 bg-background/95 backdrop-blur-md border-border shadow-2xl rounded-2xl" align="end">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 py-1 mb-1 tracking-widest border-b border-border/50">Mark Attendance</p>
-                          <button
-                            onClick={() => {
-                              const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                              setOpenAttendanceId(null);
-                              updatePatient(patient.id || (patient as any)._id, { inTime: time });
-                              toast.success(`In-Time marked: ${time}`);
-                            }}
-                            className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.inTime ? 'bg-secondary/20 text-secondary' : 'hover:bg-accent text-muted-foreground'
-                              }`}
-                          >
-                            <div className={`p-1.5 rounded-lg ${patient.inTime ? 'bg-secondary/20' : 'bg-muted'}`}>
-                              <LogIn size={14} />
-                            </div>
-                            <div className="text-left">
-                              <p className="leading-none">{patient.inTime ? `IN: ${patient.inTime}` : 'Mark In'}</p>
-                            </div>
-                          </button>
-                          <button
-                            onClick={() => {
-                              const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                              setOpenAttendanceId(null);
-                              updatePatient(patient.id || (patient as any)._id, { outTime: time });
-                              toast.success(`Out-Time marked: ${time}`);
-                            }}
-                            className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-xs font-bold transition-all ${patient.outTime ? 'bg-destructive/20 text-destructive' : 'hover:bg-accent text-muted-foreground'
-                              }`}
-                          >
-                            <div className={`p-1.5 rounded-lg ${patient.outTime ? 'bg-destructive/20' : 'bg-muted'}`}>
-                              <LogOut size={14} />
-                            </div>
-                            <div className="text-left">
-                              <p className="leading-none">{patient.outTime ? `OUT: ${patient.outTime}` : 'Mark Out'}</p>
-                            </div>
-                          </button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  )}
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Shared Schedule Dialog */}
       {schedulingPatient && (
@@ -514,7 +512,7 @@ export default function Patients() {
                         const val = e.target.value;
                         const todayStr = new Date().toISOString().split('T')[0];
                         const nowTime = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                        
+
                         if (scheduleDate === todayStr && val < nowTime) {
                           toast.error("Past time not allowed for today");
                           setScheduleTime(nowTime);
@@ -537,7 +535,7 @@ export default function Patients() {
                         const val = e.target.value;
                         const todayStr = new Date().toISOString().split('T')[0];
                         const nowTime = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-                        
+
                         if (scheduleDate === todayStr && val < nowTime) {
                           setScheduleOutTime(nowTime);
                         } else {
@@ -649,9 +647,8 @@ export default function Patients() {
               }}>Cancel</Button>
               <Button
                 size="sm"
-                className={`font-bold uppercase tracking-widest h-8 rounded-xl transition-all active:scale-95 ${
-                  reschedulingAptId ? 'bg-warning hover:bg-warning/90' : 'bg-primary hover:bg-primary/90 text-white'
-                }`}
+                className={`font-bold uppercase tracking-widest h-8 rounded-xl transition-all active:scale-95 ${reschedulingAptId ? 'bg-warning hover:bg-warning/90' : 'bg-primary hover:bg-primary/90 text-white'
+                  }`}
                 disabled={!scheduleDate || !scheduleTherapistId || !scheduleTime}
                 onClick={async () => {
                   const selectedT = therapists.find(t => (t.id || (t as any)._id) === scheduleTherapistId);
@@ -693,7 +690,7 @@ export default function Patients() {
                     duration: 45,
                     status: 'upcoming' as const,
                     type: 'therapy' as const,
-                    notes: reschedulingAptId 
+                    notes: reschedulingAptId
                       ? `Rescheduled by Supervisor ${user?.fullName}`
                       : `Quick Scheduled Session: ${scheduleTime}. By Supervisor ${user?.fullName}`,
                     createdAt: new Date().toISOString(),
